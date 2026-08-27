@@ -1,78 +1,275 @@
-<!-- This should be the location of the title of the repository, normally the short name -->
-# repo-template
+# Terraform: IBM Guardium GIM Installation Automation
 
-<!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
-<!-- [![Build Status](https://travis-ci.org/jjasghar/ibm-cloud-cli.svg?branch=master)](https://travis-ci.org/jjasghar/ibm-cloud-cli) -->
+This project automates the installation of IBM Guardium **GIM (Guardium Installation Manager)** agents on remote Linux/Unix servers using Terraform and SSH.
 
-<!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
-## Scope
+It supports multi-host deployments, automatic operating-system detection, installer-kit selection, password or SSH-key authentication, sudo users, custom TLS certificates, centralized logging, preflight network validation, and automated cleanup during `terraform destroy`.
 
-The purpose of this project is to provide a template for new open source repositories.
+> [!IMPORTANT]
+> ### Perl Module Dependencies
+>
+> The IBM Guardium GIM Agent requires additional **Perl module dependencies** on the target system. By default, this project **does not install the optional Perl packages automatically**.
+>
+> To enable automatic installation, edit `examples/basic/terraform.tfvars` and set:
+>
+> ```hcl
+> install_optional_perl_packages = true
+> ```
+>
+> **Recommended** unless the required Perl dependencies are already installed and managed separately on the target servers.
 
-<!-- A more detailed Usage or detailed explaination of the repository here -->
-## Usage
+---
 
-This repository contains some example best practices for open source repositories:
+## Table of Contents
 
-* [LICENSE](LICENSE)
-* [README.md](README.md)
-* [CONTRIBUTING.md](CONTRIBUTING.md)
-* [MAINTAINERS.md](MAINTAINERS.md)
-* [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-<!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
-* [CHANGELOG.md](CHANGELOG.md)
+- [Overview](#overview)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Basic Configuration](#basic-configuration)
+- [Basic Usage](#basic-usage)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
+- [Authors](#authors)
 
-> These are optional
+---
 
-<!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
-* [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.
-* [travis.yml](.travis.yml) - This is a example `.travis.yml`, please take a look https://docs.travis-ci.com/user/tutorial/ for more details.
+## Overview
 
-These may be copied into a new or existing project to make it easier for developers not on a project team to collaborate.
+This Terraform module automates deployment of IBM Guardium GIM agents across multiple Linux and Unix servers. For each target host it:
 
-<!-- A notes section is useful for anything that isn't covered in the Usage or Scope. Like what we have below. -->
-## Notes
+1. Reads target-host configuration from a CSV inventory.
+2. Establishes an SSH connection to each target.
+3. Detects the target operating system and architecture.
+4. Selects the appropriate IBM Guardium GIM installer kit.
+5. Performs connectivity and dependency checks.
+6. Copies the installer to the target.
+7. Runs the IBM installer in unattended mode.
+8. Starts and verifies the GIM service.
+9. Collects installation and Guardium debug logs.
+10. Records deployment results in a central summary.
 
-**NOTE: While this boilerplate project uses the Apache 2.0 license, when
-establishing a new repo using this template, please use the
-license that was approved for your project.**
+See [Architecture](docs/architecture.md) for the full installation flow and component diagram.
 
-**NOTE: This repository has been configured with the [DCO bot](https://github.com/probot/dco).
-When you set up a new repository that uses the Apache license, you should
-use the DCO to manage contributions. The DCO bot will help enforce that.
-Please contact one of the IBM GH Org stewards.**
+### What Gets Installed
 
-<!-- Questions can be useful but optional, this gives you a place to say, "This is how to contact this project maintainers or create PRs -->
-If you have any questions or issues you can create a new [issue here][issues].
+**GIM — Guardium Installation Manager**, the Guardium agent-management component that communicates with the configured Guardium appliance.
 
-Pull requests are very welcome! Make sure your patches are well tested.
-Ideally create a topic branch for every separate change you make. For
-example:
+---
 
-1. Fork the repo
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+## Features
+
+- ✅ **Automatic OS detection** — detects supported Linux distributions and architecture automatically.
+- ✅ **Automatic installer-kit selection** — selects the matching GIM kit for the detected OS and architecture.
+- ✅ **GIM kit version pinning** — use `gim_kit_version` to select a specific kit when multiple compatible kits exist.
+- ✅ **Preflight connectivity checks** — checks connectivity from the target server to the configured Guardium server before installation.
+- ✅ **IPv4-aware target detection** — automatically determines an appropriate IPv4 address for `CLIENT_IP` and `--tapip`, with manual override via `local_ip`.
+- ✅ **Cloud-host support** — handles AWS EC2, Azure, GCP, and complex cloud hostnames.
+- ✅ **SSH deployment** — uses SSH and SCP for remote installation, with password or SSH-key authentication and sudo support.
+- ✅ **Optional Perl dependency installation**
+- ✅ **Idempotent execution** — already-installed GIM agents are detected and skipped.
+- ✅ **GIM service management** — starts the service automatically when GIM is installed but not running.
+- ✅ **Structured logging** — per-host logs plus automatic collection of `central_logger.log` and `GIM.log`.
+- ✅ **Central CSV deployment summary**
+- ✅ **Custom TLS certificate support**
+- ✅ **Failover Guardium server support**
+- ✅ **Shared-secret support**
+- ✅ **Automatic uninstall on `terraform destroy`**
+
+Full details for each capability live in [docs/](docs/) — see the [Documentation](#documentation) section below.
+
+---
+
+## Prerequisites
+
+- **Terraform runner:** Terraform 1.5+, Bash, SSH client, SCP, and the IBM Guardium GIM installer packages (`sshpass` for password auth).
+- **Target hosts:** SSH server, Perl 5.10+, network connectivity to the Guardium appliance, and root or passwordless sudo access.
+
+Supported target platforms include RHEL, CentOS, Oracle Linux, Rocky Linux, AlmaLinux, Ubuntu, Debian, SUSE, and Amazon Linux.
+
+For the full prerequisite list, network port requirements, and Terraform installation instructions, see the **[Installation Guide](docs/installation.md)**.
+
+---
+
+## Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+
+cd terraform-guardium-gim-linux
+```
+
+### 2. Download GIM Installer Packages
+
+Download the IBM Guardium GIM installer packages required for your target operating systems. For detailed instructions, see the **[GIM Download Guide](GIMDownload.md)**.
+
+Place the extracted packages under:
+
+```text
+examples/basic/packages/
+└── unix/
+    ├── Guardium_12.2.1.0_GIM_RedHat_r122289/
+    ├── Guardium_12.2.1.0_GIM_Ubuntu_r122289/
+    └── ...
+```
+
+### 3. Configure the Server Inventory
+
+Edit `examples/basic/inventory/servers.csv`:
+
+```csv
+name,os,host,mgmt_port,username,password,use_sudo,pem_key_path,gim_server_host,local_ip,install_dir,perl_path,shared_secret,failover_gim_server_host,gim_ca_file,gim_key_file,gim_cert_file,gim_ca_file_local,gim_key_file_local,gim_cert_file_local,auto_assign_ip,check_8443,allow_tls_fallback,gim_kit_version
+poc-centos-v9a,linux,poc-centos-v9a.dev.my.domain.com,22,root,MyPassword,FALSE,,10.80.59.145,10.60.239.90,/usr/local/guardium,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-redhat-v9,linux,poc-redhat-v9.dev.my.domain.com,22,danny,MyPassword,TRUE,,10.80.59.145,10.60.217.149,/usr/local/guardium,,,,,,,,,,0,TRUE,FALSE,r122289
+```
+
+For a complete description of every column, see [Inventory CSV Format](docs/configuration.md#inventory-csv-format).
+
+### 4. Configure Terraform Variables
+
+Edit `examples/basic/terraform.tfvars`:
+
+```hcl
+# Copy to terraform.tfvars and adjust. Inventory (relative to examples/basic)
+servers_csv_path = "./inventory/servers.csv"
+
+# Logs written locally (relative to examples/basic)
+runner_log_dir = "./logs"
+
+# Guardium ports (global settings - apply to all servers)
+gim_server_port = 8446  # Guardium server port (default: 8446)
+listener_port   = false # GIM listener port (true = use port 8445, false = don't use listener port)
+
+# Packages root on the runner (relative to examples/basic)
+unix_packages_root = "./packages/unix"
+
+# Leave empty to AUTO-SELECT correct kit based on target OS and arch.
+unix_gim_installer_sh_path  = ""
+unix_gim_installer_gim_path = ""
+
+# Optional: custom perl path on the target. We do NOT install Perl itself.
+unix_perl_path = ""
+
+# Optional Perl packages on RHEL/CentOS targets before GIM install:
+#   true  = install perl-lib, perl-Sys-Hostname, and perl-File-Copy (fixes missing Perl modules on minimal CentOS/RHEL)
+#   false = do not install; use when hosts already have these or you manage packages elsewhere
+install_optional_perl_packages = false
+
+# Optional central summary log (empty = <runner_log_dir>/central-summary.csv)
+unix_central_log_path = ""
+```
+
+See [Basic Configuration](#basic-configuration) below for the key points to know before you apply.
+
+### 5. Initialize, Plan, and Apply
+
+```bash
+cd examples/basic
+
+terraform init
+terraform plan   # Review all intended changes before applying them
+terraform apply  # Connects to every configured target and runs the GIM deployment workflow
+```
+
+### 6. Check Logs
+
+Logs are written under `examples/basic/logs/`:
+
+```text
+logs/
+├── server1.log
+├── server1_central_logger.log
+├── server1_GIM.log
+├── server2.log
+├── server2_central_logger.log
+├── server2_GIM.log
+└── central-summary.csv
+```
+
+See [Logging](docs/usage.md#logging) for details on log levels and the central summary.
+
+---
+
+## Basic Configuration
+
+Configuration is split between two files:
+
+- **`servers.csv`** — per-host configuration (host, credentials, Guardium server, TLS certs, etc.)
+- **`terraform.tfvars`** — global deployment configuration (packages root, ports, logging)
+
+Key points:
+
+- `gim_server_host` is configured **per server** in `servers.csv`; `gim_server_port` is configured **globally** in `terraform.tfvars`.
+- At least one SSH authentication method (`password` or `pem_key_path`) must be set per host.
+- Non-root SSH users need `use_sudo = TRUE` and passwordless sudo on the target.
+
+For the full variable reference, CSV column reference, and authentication examples, see the **[Configuration Reference](docs/configuration.md)**. For TLS certificates, kit-version pinning, and platform-specific notes, see **[Advanced Configuration](docs/advanced-configuration.md)**.
+
+---
+
+## Basic Usage
+
+```bash
+cd examples/basic
+
+terraform init
+terraform plan
+terraform apply
+```
+
+To remove GIM from a host, run `terraform destroy` — by default this uninstalls GIM from the target before removing it from Terraform state. See the **[Usage Guide](docs/usage.md)** for re-running installations, inspecting Terraform state, and manual uninstall/cleanup steps.
+
+---
+
+## Documentation
+
+| Guide | Description |
+|---|---|
+| [Installation Guide](docs/installation.md) | Prerequisites, network requirements, and installing Terraform |
+| [Configuration Reference](docs/configuration.md) | Terraform variables, CSV inventory format, authentication, GIM ports |
+| [Advanced Configuration](docs/advanced-configuration.md) | Custom TLS certificates, kit-version pinning, sudo setup, platform-specific notes |
+| [Architecture](docs/architecture.md) | Component overview, installation flow, and file structure |
+| [Usage Guide](docs/usage.md) | Running, re-running, logging, uninstalling, and cleanup |
+| [Troubleshooting](docs/troubleshooting.md) | Common errors and how to resolve them |
+| [Security Considerations](docs/security.md) | Credential handling, SSH keys, and network security |
+| [Creating Self-Signed GIM Certificates](docs/create-self-signed-gim-cert.md) | Step-by-step TLS certificate generation |
+| [GIM Download Guide](GIMDownload.md) | Downloading GIM/S-TAP installer packages from IBM |
+
+### References
+
+- [IBM Guardium Documentation](https://www.ibm.com/docs/en/gdp)
+- [Terraform Documentation](https://developer.hashicorp.com/terraform/docs)
+
+---
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
+
+---
+
+## Support
+
+Before opening an issue, see the [Troubleshooting Guide](docs/troubleshooting.md). Maintainer information is available in [MAINTAINERS.md](MAINTAINERS.md).
+
+---
 
 ## License
 
-All source files must include a Copyright and License header. The SPDX license header is 
-preferred because it can be easily scanned.
-
-If you would like to see the detailed LICENSE click [here](LICENSE).
+This project is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE).
 
 ```text
 #
-# Copyright IBM Corp. {Year project was created} - {Current Year}
+# Copyright (c) IBM Corp. 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 ```
+
+---
+
 ## Authors
 
-Optionally, you may include a list of authors, though this is redundant with the built-in
-GitHub list of contributors.
-
-- Author: New OpenSource IBMer <new-opensource-ibmer@ibm.com>
-
-[issues]: https://github.com/IBM/repo-template/issues/new
+This module is maintained by IBM with contributions from the community. See the repository's contributors page for the complete contributor history.

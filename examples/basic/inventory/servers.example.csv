@@ -1,0 +1,8 @@
+name,os,host,mgmt_port,username,password,use_sudo,pem_key_path,gim_server_host,local_ip,install_dir,perl_path,shared_secret,failover_gim_server_host,gim_ca_file,gim_key_file,gim_cert_file,gim_ca_file_local,gim_key_file_local,gim_cert_file_local,auto_assign_ip,check_8443,allow_tls_fallback,gim_kit_version
+poc-centos-v9a,linux,poc-centos-v9a.dev.my.domain.com,22,root,MyPassword,FALSE,,10.80.59.145,10.60.239.90,/usr/local,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-redhat-v9,linux,poc-redhat-v9.dev.my.domain.com,22,danny,MyPassword,TRUE,,10.80.59.145,10.60.217.149,/usr/local,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-rockyv10,linux,poc-rockyv10.dev.my.domain.com,22,root,MyPassword,FALSE,,10.80.59.145,10.60.197.210,/usr/local,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-redhat-v10,linux,9.60.253.146,22,root,MyPassword,FALSE,,10.80.59.145,10.60.253.146,/usr/local,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-sles-v15,linux,poc-sles-v15.dev.my.domain.com,22,root,MyPassword,FALSE,,10.80.59.145,10.60.209.214,/usr/local,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-ubuntu-v22,linux,poc-ubuntu-v22.dev.my.domain.com,22,root,MyPassword,FALSE,,10.80.59.145,10.60.241.210,/usr/local,,,,,,,,,,0,TRUE,FALSE,r122289
+poc-redhat-v8,linux,poc-redhat-v8.dev.my.domain.com,22,danny,MyPassword,TRUE,~/home/danny/.ssh/dan.pem,10.80.59.145,10.60.193.231,/usr/local,,,,,,,,,,0,TRUE,FALSE,r123268
