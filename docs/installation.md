@@ -79,7 +79,7 @@ perl-core
 ```
 
 > [!IMPORTANT]
-> By default, this project **does not install these optional Perl packages automatically**. To enable automatic installation, set `install_optional_perl_packages = true` in `examples/basic/terraform.tfvars`. This is recommended unless the required Perl dependencies are already installed and managed separately on the target servers.
+> By default, this project **does not install these optional Perl packages automatically**. To enable automatic installation, set `install_optional_perl_packages = true` in `examples/linux-gdp-gim/terraform.tfvars`. This is recommended unless the required Perl dependencies are already installed and managed separately on the target servers.
 
 ---
 

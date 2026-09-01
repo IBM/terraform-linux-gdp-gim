@@ -110,7 +110,7 @@ terraform-guardium-gim-linux/
             └── central-summary.csv
 ```
 
-`examples/basic/` is the working example driven by the [Quick Start](../README.md#quick-start): its `main.tf` reads `inventory/servers.csv` and invokes `scripts/unix/install_gim_unix.sh` (and, on `terraform destroy`, `scripts/unix/uninstall_gim_unix.sh`) over SSH for each target host.
+`examples/linux-gdp-gim/` is the working example driven by the [Quick Start](../README.md#quick-start): its `main.tf` reads `inventory/servers.csv` and invokes `scripts/unix/install_gim_unix.sh` (and, on `terraform destroy`, `scripts/unix/uninstall_gim_unix.sh`) over SSH for each target host.
 
 ---
 
