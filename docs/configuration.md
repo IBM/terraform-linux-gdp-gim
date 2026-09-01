@@ -1,6 +1,6 @@
 # Configuration Reference
 
-Configuration is split between two files under `examples/basic/`:
+Configuration is split between two files under `examples/linux-gdp-gim/`:
 
 - **`terraform.tfvars`** — global deployment configuration
 - **`inventory/servers.csv`** — per-host configuration
@@ -16,7 +16,7 @@ Configuration is split between two files under `examples/basic/`:
 
 ## Terraform Variables
 
-Defined in `examples/basic/variables.tf` and set in `examples/basic/terraform.tfvars`.
+Defined in `examples/linux-gdp-gim/variables.tf` and set in `examples/linux-gdp-gim/terraform.tfvars`.
 
 ### Required Variables
 
