@@ -57,15 +57,12 @@ The Unix installer workflow (`scripts/unix/install_gim_unix.sh`) contains eight 
 ## File Structure
 
 ```text
-terraform-guardium-gim-linux/
+terraform-linux-gdp-gim/
 ├── README.md
 ├── GIMDownload.md
 ├── CONTRIBUTING.md
 ├── MAINTAINERS.md
 ├── LICENSE
-├── main.tf
-├── variables.tf
-├── outputs.tf
 │
 ├── docs/
 │   ├── installation.md
@@ -85,8 +82,9 @@ terraform-guardium-gim-linux/
 │       └── install_stap_unix.sh
 │
 └── examples/
-    └── basic/
+    └── linux-gdp-gim/
         ├── main.tf
+        ├── outputs.tf
         ├── variables.tf
         ├── terraform.tfvars
         │
