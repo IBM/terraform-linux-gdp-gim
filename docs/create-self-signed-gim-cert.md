@@ -67,7 +67,7 @@ You should see:
 ## 5a. Option A – Copy from Terraform runner (script copies to remote)
 
 1. Create a `gim-certs` directory where you run Terraform (e.g. `examples/linux-gdp-gim/gim-certs/`).
-2. Copy `gim-key.pem` and `gim-cert.pem` there (e.g. `cp gim-key.pem gim-cert.pem /path/to/terraform-guardium-gim-linux-main/examples/linux-gdp-gim/gim-certs/`).
+2. Copy `gim-key.pem` and `gim-cert.pem` there (e.g. `cp gim-key.pem gim-cert.pem /path/to/terraform-linux-gdp-gim/examples/linux-gdp-gim/gim-certs/`).
 3. In `servers.csv` set **gim_key_file_local** and **gim_cert_file_local** to those paths (relative to the Terraform run), and leave **gim_ca_file**, **gim_key_file**, **gim_cert_file** empty for that row:
 
 ```csv

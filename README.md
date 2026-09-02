@@ -99,7 +99,7 @@ For the full prerequisite list, network port requirements, and Terraform install
 ```bash
 git clone <repository-url>
 
-cd terraform-guardium-gim-linux
+cd terraform-linux-gdp-gim
 ```
 
 ### 2. Download GIM Installer Packages
