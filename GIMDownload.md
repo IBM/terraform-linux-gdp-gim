@@ -42,13 +42,13 @@ You can use the **Guardium® Installation Manager (GIM)** to install and maintai
 
 ## Example folder structure
 
-After downloading and extracting the GIM and S-TAP fix packs from IBM Fix Central (or the trial page), place them under `examples/basic/packages` so the layout matches what the examples expect. Below is the target structure for **Guardium 12.2.1.0** (build `r122289`); version and build numbers may differ for your fix pack.
+After downloading and extracting the GIM and S-TAP fix packs from IBM Fix Central (or the trial page), place them under `examples/linux-gdp-gim/packages` so the layout matches what the examples expect. Below is the target structure for **Guardium 12.2.1.0** (build `r122289`); version and build numbers may differ for your fix pack.
 
 - **GIM packages** — One directory per platform (Amazon, Debian, RedHat, Suse, Ubuntu). Each contains `GIM_Agents/` (GIM and GUC `.gim`/`.gim.sh` bundles), `MD5SUMS`, and `consolidated_installer.sh`.
 - **S-TAP packages** — One directory per platform. Each contains `GIM_Packages/` (S-TAP `.gim`/`.gim.sh`), `Kernel_Signing/`, `Native_Installers/` (e.g. `.rpm` where applicable), `Shell_Installers/`, `Unified_Shell_Installer/`, `MD5SUMS`, and `ktaposmatch.csv`.
 
 ```text
-examples/basic/packages
+examples/linux-gdp-gim/packages
 └── unix
     ├── Guardium_12.2.1.0_GIM_Amazon_r122289
     │   ├── GIM_Agents
@@ -222,7 +222,7 @@ examples/basic/packages
         └── ktaposmatch.csv
 ```
 
-For a given OS (e.g. Red Hat or Ubuntu), download and extract the matching **GIM** and **S-TAP** fix packs from Fix Central, then place their extracted folders under `examples/basic/packages/unix/` so the path matches the structure above. You only need the platforms you use; the basic example may reference a specific path such as `Guardium_12.2.1.0_GIM_RedHat_r122289` or the corresponding S-TAP folder.
+For a given OS (e.g. Red Hat or Ubuntu), download and extract the matching **GIM** and **S-TAP** fix packs from Fix Central, then place their extracted folders under `examples/linux-gdp-gim/packages/unix/` so the path matches the structure above. You only need the platforms you use; the basic example may reference a specific path such as `Guardium_12.2.1.0_GIM_RedHat_r122289` or the corresponding S-TAP folder.
 
 ---
 

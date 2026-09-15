@@ -57,15 +57,12 @@ The Unix installer workflow (`scripts/unix/install_gim_unix.sh`) contains eight 
 ## File Structure
 
 ```text
-terraform-guardium-gim-linux/
+terraform-linux-gdp-gim/
 ├── README.md
 ├── GIMDownload.md
 ├── CONTRIBUTING.md
 ├── MAINTAINERS.md
 ├── LICENSE
-├── main.tf
-├── variables.tf
-├── outputs.tf
 │
 ├── docs/
 │   ├── installation.md
@@ -85,8 +82,9 @@ terraform-guardium-gim-linux/
 │       └── install_stap_unix.sh
 │
 └── examples/
-    └── basic/
+    └── linux-gdp-gim/
         ├── main.tf
+        ├── outputs.tf
         ├── variables.tf
         ├── terraform.tfvars
         │
@@ -110,7 +108,7 @@ terraform-guardium-gim-linux/
             └── central-summary.csv
 ```
 
-`examples/basic/` is the working example driven by the [Quick Start](../README.md#quick-start): its `main.tf` reads `inventory/servers.csv` and invokes `scripts/unix/install_gim_unix.sh` (and, on `terraform destroy`, `scripts/unix/uninstall_gim_unix.sh`) over SSH for each target host.
+`examples/linux-gdp-gim/` is the working example driven by the [Quick Start](../README.md#quick-start): its `main.tf` reads `inventory/servers.csv` and invokes `scripts/unix/install_gim_unix.sh` (and, on `terraform destroy`, `scripts/unix/uninstall_gim_unix.sh`) over SSH for each target host.
 
 ---
 

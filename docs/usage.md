@@ -13,7 +13,7 @@
 ## Basic Installation
 
 ```bash
-cd examples/basic
+cd examples/linux-gdp-gim
 
 terraform init
 terraform plan
@@ -131,7 +131,7 @@ if you want Terraform to remove the resource from state without uninstalling GIM
 Example using password authentication:
 
 ```bash
-cd examples/basic
+cd examples/linux-gdp-gim
 
 bash ../../scripts/unix/uninstall_gim_unix.sh \
   --host "server.example.com" \

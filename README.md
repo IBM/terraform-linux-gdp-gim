@@ -9,7 +9,7 @@ It supports multi-host deployments, automatic operating-system detection, instal
 >
 > The IBM Guardium GIM Agent requires additional **Perl module dependencies** on the target system. By default, this project **does not install the optional Perl packages automatically**.
 >
-> To enable automatic installation, edit `examples/basic/terraform.tfvars` and set:
+> To enable automatic installation, edit `examples/linux-gdp-gim/terraform.tfvars` and set:
 >
 > ```hcl
 > install_optional_perl_packages = true
@@ -99,7 +99,7 @@ For the full prerequisite list, network port requirements, and Terraform install
 ```bash
 git clone <repository-url>
 
-cd terraform-guardium-gim-linux
+cd terraform-linux-gdp-gim
 ```
 
 ### 2. Download GIM Installer Packages
@@ -109,7 +109,7 @@ Download the IBM Guardium GIM installer packages required for your target operat
 Place the extracted packages under:
 
 ```text
-examples/basic/packages/
+examples/linux-gdp-gim/packages/
 └── unix/
     ├── Guardium_12.2.1.0_GIM_RedHat_r122289/
     ├── Guardium_12.2.1.0_GIM_Ubuntu_r122289/
@@ -118,7 +118,7 @@ examples/basic/packages/
 
 ### 3. Configure the Server Inventory
 
-Edit `examples/basic/inventory/servers.csv`:
+Edit `examples/linux-gdp-gim/inventory/servers.csv`:
 
 ```csv
 name,os,host,mgmt_port,username,password,use_sudo,pem_key_path,gim_server_host,local_ip,install_dir,perl_path,shared_secret,failover_gim_server_host,gim_ca_file,gim_key_file,gim_cert_file,gim_ca_file_local,gim_key_file_local,gim_cert_file_local,auto_assign_ip,check_8443,allow_tls_fallback,gim_kit_version
@@ -130,20 +130,20 @@ For a complete description of every column, see [Inventory CSV Format](docs/conf
 
 ### 4. Configure Terraform Variables
 
-Edit `examples/basic/terraform.tfvars`:
+Edit `examples/linux-gdp-gim/terraform.tfvars`:
 
 ```hcl
-# Copy to terraform.tfvars and adjust. Inventory (relative to examples/basic)
+# Copy to terraform.tfvars and adjust. Inventory (relative to examples/linux-gdp-gim)
 servers_csv_path = "./inventory/servers.csv"
 
-# Logs written locally (relative to examples/basic)
+# Logs written locally (relative to examples/linux-gdp-gim)
 runner_log_dir = "./logs"
 
 # Guardium ports (global settings - apply to all servers)
 gim_server_port = 8446  # Guardium server port (default: 8446)
 listener_port   = false # GIM listener port (true = use port 8445, false = don't use listener port)
 
-# Packages root on the runner (relative to examples/basic)
+# Packages root on the runner (relative to examples/linux-gdp-gim)
 unix_packages_root = "./packages/unix"
 
 # Leave empty to AUTO-SELECT correct kit based on target OS and arch.
@@ -167,7 +167,7 @@ See [Basic Configuration](#basic-configuration) below for the key points to know
 ### 5. Initialize, Plan, and Apply
 
 ```bash
-cd examples/basic
+cd examples/linux-gdp-gim
 
 terraform init
 terraform plan   # Review all intended changes before applying them
@@ -176,7 +176,7 @@ terraform apply  # Connects to every configured target and runs the GIM deployme
 
 ### 6. Check Logs
 
-Logs are written under `examples/basic/logs/`:
+Logs are written under `examples/linux-gdp-gim/logs/`:
 
 ```text
 logs/
@@ -213,7 +213,7 @@ For the full variable reference, CSV column reference, and authentication exampl
 ## Basic Usage
 
 ```bash
-cd examples/basic
+cd examples/linux-gdp-gim
 
 terraform init
 terraform plan

@@ -4,7 +4,7 @@ Use these steps to create a self-signed certificate and private key for GIM cust
 
 **Two ways to provide certs:**
 
-- **Copy from Terraform runner (recommended):** Put the PEM files on the machine where you run `terraform apply` (e.g. `./gim-certs/gim-key.pem` and `./gim-certs/gim-cert.pem` under `examples/basic/gim-certs/`). In `servers.csv` set **`gim_key_file_local`** and **`gim_cert_file_local`** to those paths (e.g. `./gim-certs/gim-key.pem`, `./gim-certs/gim-cert.pem`). The install script will copy them to each remote host under `/tmp/gim-certs/` before running the GIM installer. No manual copy to targets needed.
+- **Copy from Terraform runner (recommended):** Put the PEM files on the machine where you run `terraform apply` (e.g. `./gim-certs/gim-key.pem` and `./gim-certs/gim-cert.pem` under `examples/linux-gdp-gim/gim-certs/`). In `servers.csv` set **`gim_key_file_local`** and **`gim_cert_file_local`** to those paths (e.g. `./gim-certs/gim-key.pem`, `./gim-certs/gim-cert.pem`). The install script will copy them to each remote host under `/tmp/gim-certs/` before running the GIM installer. No manual copy to targets needed.
 - **Paths on target host:** Place the PEM files on each target host yourself. In `servers.csv` set **`gim_key_file`** and **`gim_cert_file`** to the paths on the target (e.g. `/tmp/gim-certs/gim-key.pem`). Leave `gim_*_file_local` empty.
 
 ## Prerequisites
@@ -66,8 +66,8 @@ You should see:
 
 ## 5a. Option A – Copy from Terraform runner (script copies to remote)
 
-1. Create a `gim-certs` directory where you run Terraform (e.g. `examples/basic/gim-certs/`).
-2. Copy `gim-key.pem` and `gim-cert.pem` there (e.g. `cp gim-key.pem gim-cert.pem /path/to/terraform-guardium-gim-linux-main/examples/basic/gim-certs/`).
+1. Create a `gim-certs` directory where you run Terraform (e.g. `examples/linux-gdp-gim/gim-certs/`).
+2. Copy `gim-key.pem` and `gim-cert.pem` there (e.g. `cp gim-key.pem gim-cert.pem /path/to/terraform-linux-gdp-gim/examples/linux-gdp-gim/gim-certs/`).
 3. In `servers.csv` set **gim_key_file_local** and **gim_cert_file_local** to those paths (relative to the Terraform run), and leave **gim_ca_file**, **gim_key_file**, **gim_cert_file** empty for that row:
 
 ```csv

@@ -43,7 +43,7 @@ gim_cert_file_local
 Recommended directory:
 
 ```text
-examples/basic/gim-certs/
+examples/linux-gdp-gim/gim-certs/
 ├── gim-key.pem
 ├── gim-cert.pem
 └── gim-ca.pem

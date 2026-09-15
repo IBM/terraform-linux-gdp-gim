@@ -16,9 +16,9 @@ Recommended `.gitignore` entries:
 terraform.tfvars
 *.tfstate
 *.tfstate.*
-examples/basic/inventory/servers.csv
-examples/basic/logs/
-examples/basic/gim-certs/*.pem
+examples/linux-gdp-gim/inventory/servers.csv
+examples/linux-gdp-gim/logs/
+examples/linux-gdp-gim/gim-certs/*.pem
 ```
 
 Keep `.example` templates under version control instead.

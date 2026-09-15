@@ -52,13 +52,13 @@ locals {
     }
   }
   _resolved_gim_ca_file_local = {
-    for k, v in local._resolve_local_path : k => v.ca != "" ? (startswith(v.ca, "/") ? v.ca : "${path.module}/${replace(v.ca, "./", "")}") : ""
+    for k, v in local._resolve_local_path : k => v.ca != "" ? (startswith(v.ca, "/") ? v.ca : "${path.root}/${replace(v.ca, "./", "")}") : ""
   }
   _resolved_gim_key_file_local = {
-    for k, v in local._resolve_local_path : k => v.key != "" ? (startswith(v.key, "/") ? v.key : "${path.module}/${replace(v.key, "./", "")}") : ""
+    for k, v in local._resolve_local_path : k => v.key != "" ? (startswith(v.key, "/") ? v.key : "${path.root}/${replace(v.key, "./", "")}") : ""
   }
   _resolved_gim_cert_file_local = {
-    for k, v in local._resolve_local_path : k => v.cert != "" ? (startswith(v.cert, "/") ? v.cert : "${path.module}/${replace(v.cert, "./", "")}") : ""
+    for k, v in local._resolve_local_path : k => v.cert != "" ? (startswith(v.cert, "/") ? v.cert : "${path.root}/${replace(v.cert, "./", "")}") : ""
   }
   gim_ca_file_local_args = {
     for k, v in local.unix_servers : k => local._resolved_gim_ca_file_local[k] != "" ? "--ca-file-local \"${local._resolved_gim_ca_file_local[k]}\"" : ""
@@ -93,7 +93,7 @@ resource "null_resource" "install_gim_unix" {
     gim_kit_version            = try(each.value.gim_kit_version, "")
     local_ip                   = try(each.value.local_ip, "")
     packages_root              = var.unix_packages_root
-    script_hash                = filesha256("${path.module}/../../scripts/unix/install_gim_unix.sh")
+    script_hash                = filesha256("${path.module}/../../scripts/install_gim_unix.sh")
     install_optional_perl_pkgs = tostring(var.install_optional_perl_packages)
     # Destroy-time provisioners may only reference `self`/`count.index`/`each.key` - not
     # var.* or path.module directly - so anything the destroy provisioner below needs
@@ -111,7 +111,7 @@ set -e
 mkdir -p "${var.runner_log_dir}"
 LOG_FILE="${var.runner_log_dir}/${each.key}.log"
 
-bash "${path.module}/../../scripts/unix/install_gim_unix.sh" \
+bash "${path.module}/../../scripts/install_gim_unix.sh" \
   --host "${each.value.host}" \
   --mgmt-port "${each.value.mgmt_port}" \
   --username "${each.value.username}" \
@@ -129,12 +129,6 @@ ${local.listener_port_arg != "" ? "  ${local.listener_port_arg} \\\n" : ""}${loc
 EOT
   }
 
-  # Runs on `terraform destroy` and whenever a change to the triggers above forces this
-  # resource to be replaced (e.g. a tainted host, or an install_dir/gim_kit_version edit).
-  # Destroy-time provisioners may ONLY reference self/count.index/each.key - not var.*,
-  # path.module, or each.value (which may already be gone by the time this runs) - so
-  # every value here comes from `self.triggers`, which is why password, runner_log_dir,
-  # module_path, and uninstall_on_destroy were all added to the triggers map above.
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["/bin/bash", "-c"]
@@ -148,7 +142,7 @@ fi
 mkdir -p "${self.triggers.runner_log_dir}"
 LOG_FILE="${self.triggers.runner_log_dir}/${self.triggers.host}-uninstall.log"
 
-bash "${self.triggers.module_path}/../../scripts/unix/uninstall_gim_unix.sh" \
+bash "${self.triggers.module_path}/../../scripts/uninstall_gim_unix.sh" \
   --host "${self.triggers.host}" \
   --mgmt-port "${self.triggers.mgmt_port}" \
   --username "${self.triggers.username}" \
@@ -160,4 +154,3 @@ bash "${self.triggers.module_path}/../../scripts/unix/uninstall_gim_unix.sh" \
 EOT
   }
 }
-
